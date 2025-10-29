@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="text-center py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <div class="mb-4">
+                            <i class="fas fa-shield-alt fa-4x text-danger"></i>
+                        </div>
+                        <h1 class="display-5 fw-bold text-danger mb-3">Access Denied</h1>
+                        <p class="lead text-muted mb-4">
+                            You don't have permission to access this resource.
+                        </p>
+                        <p class="text-muted mb-4">
+                            Please contact an administrator if you believe this is an error.
+                        </p>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg px-4">
+                                <i class="fas fa-home me-2"></i>Go to Home
+                            </a>
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+    }
+
+    .card {
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    .fa-shield-alt {
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+</style>

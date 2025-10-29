@@ -1,0 +1,110 @@
+@model LibraryManagementSystem.Models.Book
+
+@{
+    ViewData["Title"] = "Delete Book - " + Model.Title;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-gradient-danger text-white">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-trash-alt me-2"></i>Delete Book
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-warning" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Warning!</strong> This action cannot be undone. Are you sure you want to delete this book?
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-4 fw-bold text-primary">
+                                <i class="fas fa-book me-1"></i>Title:
+                            </dt>
+                            <dd class="col-sm-8">
+                                <strong>@Model.Title</strong>
+                            </dd>
+
+                            <dt class="col-sm-4 fw-bold text-primary">
+                                <i class="fas fa-user me-1"></i>Author:
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Model.Author
+                            </dd>
+
+                            <dt class="col-sm-4 fw-bold text-primary">
+                                <i class="fas fa-tag me-1"></i>Category:
+                            </dt>
+                            <dd class="col-sm-8">
+                                <span class="badge bg-primary">@Model.Category</span>
+                            </dd>
+
+                            <dt class="col-sm-4 fw-bold text-primary">
+                                <i class="fas fa-copy me-1"></i>Available Copies:
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Model.AvailableCopies
+                            </dd>
+
+                            <dt class="col-sm-4 fw-bold text-primary">
+                                <i class="fas fa-hashtag me-1"></i>Book ID:
+                            </dt>
+                            <dd class="col-sm-8">
+                                <code>@Model.BookID</code>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="BookID" />
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-action="Details" asp-route-id="@Model.BookID" class="btn btn-outline-secondary btn-lg px-4">
+                            <i class="fas fa-arrow-left me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-danger btn-lg px-4">
+                            <i class="fas fa-trash me-2"></i>Delete Book
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-danger {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+    }
+
+    .card {
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    .alert {
+        border-radius: 10px;
+        border: none;
+    }
+
+    .btn {
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        border: none;
+    }
+
+    .btn-danger:hover {
+        background: linear-gradient(135deg, #c0392b, #a93226);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+    }
+</style>

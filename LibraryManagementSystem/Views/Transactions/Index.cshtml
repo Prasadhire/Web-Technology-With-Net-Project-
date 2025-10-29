@@ -1,0 +1,49 @@
+@model IEnumerable<LibraryManagementSystem.Models.Transaction>
+
+@{
+    ViewData["Title"] = "All Transactions";
+}
+
+<h2>All Library Transactions</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Book</th>
+            <th>Borrowed Date</th>
+            <th>Return Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.User.Name</td>
+                <td>@item.Book.Title</td>
+                <td>@item.BorrowedDate.ToString("MM/dd/yyyy")</td>
+                <td>@(item.ReturnDate?.ToString("MM/dd/yyyy") ?? "Not Returned")</td>
+                <td>
+                    @if (item.ReturnDate == null)
+                    {
+                        <span class="badge bg-warning">Borrowed</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Returned</span>
+                    }
+                </td>
+                <td>
+                    @if (item.ReturnDate == null)
+                    {
+                        <form asp-action="Return" asp-route-id="@item.TransactionID" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-success btn-sm">Mark Returned</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

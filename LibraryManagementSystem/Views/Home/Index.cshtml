@@ -1,0 +1,384 @@
+﻿@{
+    ViewData["Title"] = "Digital Library - Home";
+}
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold text-white mb-4">
+                    Welcome to <span class="text-warning">Digital Library</span>
+                </h1>
+                <p class="lead text-white-50 mb-4 fs-5">
+                    Discover, borrow, and explore a world of knowledge. Your gateway to endless learning and imagination.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-controller="Books" asp-action="Index" class="btn btn-primary btn-lg px-4 py-3">
+                            <i class="fas fa-book-open me-2"></i>Browse Books
+                        </a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-outline-light btn-lg px-4 py-3">
+                                <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+                            </a>
+                        }
+                        else if (User.IsInRole("Librarian"))
+                        {
+                            <a asp-controller="Librarian" asp-action="Dashboard" class="btn btn-outline-light btn-lg px-4 py-3">
+                                <i class="fas fa-tachometer-alt me-2"></i>Librarian Dashboard
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Transactions" asp-action="MyTransactions" class="btn btn-outline-light btn-lg px-4 py-3">
+                                <i class="fas fa-book me-2"></i>My Books
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg px-4 py-3">
+                            <i class="fas fa-user-plus me-2"></i>Get Started
+                        </a>
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light btn-lg px-4 py-3">
+                            <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="hero-image">
+                    <i class="fas fa-book-reader fa-10x text-white-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="display-5 fw-bold text-primary mb-3">Why Choose Our Library?</h2>
+                <p class="lead text-muted">Experience the future of library management with our modern digital platform</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-infinity fa-2x"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">24/7 Access</h5>
+                        <p class="card-text text-muted">Access your favorite books anytime, anywhere with our digital platform.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-search fa-2x"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Smart Search</h5>
+                        <p class="card-text text-muted">Find books instantly with our advanced search and filtering system.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-info text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-heart fa-2x"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Personal Wishlist</h5>
+                        <p class="card-text text-muted">Save your favorite books and get notified when they're available.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="py-5 bg-gradient-primary text-white">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <div class="stats-number display-4 fw-bold mb-2">@ViewBag.Stats?.TotalBooks ?? 0</div>
+                <div class="h6 text-white-50">Books Available</div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stats-number display-4 fw-bold mb-2">@ViewBag.Stats?.TotalUsers ?? 0</div>
+                <div class="h6 text-white-50">Active Members</div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stats-number display-4 fw-bold mb-2">@ViewBag.Stats?.ActiveBorrowings ?? 0</div>
+                <div class="h6 text-white-50">Books Borrowed</div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stats-number display-4 fw-bold mb-2">@ViewBag.Stats?.TotalCategories ?? 0</div>
+                <div class="h6 text-white-50">Categories</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Books Section -->
+@if (ViewBag.RecentBooks != null && ViewBag.RecentBooks.Count > 0)
+{
+    <section class="py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <h2 class="display-6 fw-bold text-primary mb-3">Recently Added Books</h2>
+                    <p class="text-muted">Check out the latest additions to our collection</p>
+                </div>
+            </div>
+
+            <div class="row">
+                @foreach (var book in ViewBag.RecentBooks)
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="card h-100 border-0 shadow-sm book-card animate__animated animate__fadeInUp">
+                            <div class="card-body text-center p-4">
+                                <div class="book-cover-placeholder mb-3">
+                                    <i class="fas fa-book fa-3x text-primary"></i>
+                                </div>
+                                <h6 class="card-title fw-bold mb-2">@book.Title</h6>
+                                <p class="card-text text-muted small mb-2">by @book.Author</p>
+                                <span class="badge bg-primary mb-3">@book.Category</span>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        @book.AvailableCopies copy@(book.AvailableCopies != 1 ? "ies" : "") available
+                                    </small>
+                                    <a asp-controller="Books" asp-action="Details" asp-route-id="@book.BookID"
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="text-center mt-4">
+                <a asp-controller="Books" asp-action="Index" class="btn btn-primary btn-lg">
+                    <i class="fas fa-book-open me-2"></i>Explore All Books
+                </a>
+            </div>
+        </div>
+    </section>
+}
+
+<!-- Testimonials Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="display-6 fw-bold text-primary mb-3">What Our Members Say</h2>
+                <p class="text-muted">Hear from our community of book lovers</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-quote-left fa-2x text-primary opacity-25"></i>
+                        </div>
+                        <p class="card-text mb-3">"This digital library has transformed how I discover and read books. The interface is intuitive and the collection is amazing!"</p>
+                        <div class="d-flex align-items-center justify-content-center">
+                            <div class="avatar-circle bg-primary me-3">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="text-start">
+                                <strong>Sarah Johnson</strong>
+                                <br><small class="text-muted">Regular Reader</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-quote-left fa-2x text-success opacity-25"></i>
+                        </div>
+                        <p class="card-text mb-3">"As a librarian, I love how easy it is to manage the collection and help our community find the perfect book."</p>
+                        <div class="d-flex align-items-center justify-content-center">
+                            <div class="avatar-circle bg-success me-3">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div class="text-start">
+                                <strong>Michael Chen</strong>
+                                <br><small class="text-muted">Librarian</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-quote-left fa-2x text-info opacity-25"></i>
+                        </div>
+                        <p class="card-text mb-3">"The wishlist feature and borrowing system make it so convenient to manage my reading habits."</p>
+                        <div class="d-flex align-items-center justify-content-center">
+                            <div class="avatar-circle bg-info me-3">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="text-start">
+                                <strong>Emily Davis</strong>
+                                <br><small class="text-muted">Student</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="py-5 bg-gradient-primary text-white">
+    <div class="container text-center">
+        <h2 class="display-6 fw-bold mb-3">Ready to Start Your Reading Journey?</h2>
+        <p class="lead mb-4">Join thousands of readers who have discovered their next favorite book with us.</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-controller="Books" asp-action="Index" class="btn btn-light btn-lg px-4">
+                    <i class="fas fa-search me-2"></i>Find Your Next Book
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-4">
+                    <i class="fas fa-rocket me-2"></i>Join Today - It's Free!
+                </a>
+                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light btn-lg px-4">
+                    <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="50" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="30" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.1;
+    }
+
+    .hero-image {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @@keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+        100% { transform: translateY(0px); }
+    }
+
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .feature-icon {
+        transition: all 0.3s ease;
+    }
+
+    .card:hover .feature-icon {
+        transform: scale(1.1);
+    }
+
+    .book-cover-placeholder {
+        padding: 2rem;
+        border: 2px dashed rgba(102, 126, 234, 0.3);
+        border-radius: 10px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        transition: all 0.3s ease;
+    }
+
+    .book-card:hover .book-cover-placeholder {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .book-card:hover .book-cover-placeholder i {
+        color: white;
+    }
+
+    .avatar-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items-center;
+        justify-content-center;
+        color: white;
+        font-size: 20px;
+    }
+
+    .animate__fadeInUp {
+        animation-duration: 0.8s;
+    }
+
+    .stats-number {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animation delays to feature cards
+            const featureCards = document.querySelectorAll('.animate__fadeInUp');
+            featureCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.2}s`;
+            });
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

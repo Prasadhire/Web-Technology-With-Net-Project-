@@ -1,0 +1,240 @@
+@model LibraryManagementSystem.Models.Book
+
+@{
+    ViewData["Title"] = "Book Details - " + Model.Title;
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Book Details Card -->
+        <div class="card mb-4">
+            <div class="card-header bg-gradient-primary text-white">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-book me-2"></i>@Model.Title
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <dl class="row">
+                            <dt class="col-sm-4 fw-bold text-primary">
+                                <i class="fas fa-user me-1"></i>Author:
+                            </dt>
+                            <dd class="col-sm-8">
+                                <span class="h5">@Model.Author</span>
+                            </dd>
+
+                            <dt class="col-sm-4 fw-bold text-primary">
+                                <i class="fas fa-tag me-1"></i>Category:
+                            </dt>
+                            <dd class="col-sm-8">
+                                <span class="badge bg-primary fs-6">@Model.Category</span>
+                            </dd>
+
+                            <dt class="col-sm-4 fw-bold text-primary">
+                                <i class="fas fa-copy me-1"></i>Available Copies:
+                            </dt>
+                            <dd class="col-sm-8">
+                                <span class="badge @(Model.AvailableCopies > 0 ? "bg-success" : "bg-danger") fs-6">
+                                    @Model.AvailableCopies
+                                    @(Model.AvailableCopies == 1 ? "copy" : "copies")
+                                </span>
+                            </dd>
+
+                            <dt class="col-sm-4 fw-bold text-primary">
+                                <i class="fas fa-hashtag me-1"></i>Book ID:
+                            </dt>
+                            <dd class="col-sm-8">
+                                <code>@Model.BookID</code>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="book-cover-placeholder">
+                            <i class="fas fa-book fa-5x text-primary mb-3"></i>
+                            <p class="text-muted">Book Cover</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Availability Status -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded @(Model.AvailableCopies > 0 ? "bg-success-light" : "bg-danger-light")">
+                            <i class="fas @(Model.AvailableCopies > 0 ? "fa-check-circle" : "fa-times-circle") fa-2x mb-2 @(Model.AvailableCopies > 0 ? "text-success" : "text-danger")"></i>
+                            <h5 class="@(Model.AvailableCopies > 0 ? "text-success" : "text-danger")">
+                                @(Model.AvailableCopies > 0 ? "Available" : "Not Available")
+                            </h5>
+                            <p class="mb-0">@Model.AvailableCopies copies in stock</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded bg-info-light">
+                            <i class="fas fa-users fa-2x mb-2 text-info"></i>
+                            <h5 class="text-info">Borrow Status</h5>
+                            <p class="mb-0">Check current borrowings</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Action Buttons -->
+        <div class="card mb-4">
+            <div class="card-header bg-gradient-secondary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-cogs me-2"></i>Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        if (Model.AvailableCopies > 0)
+                        {
+                            <form asp-controller="Transactions" asp-action="Borrow" asp-route-id="@Model.BookID" method="post">
+                                <button type="submit" class="btn btn-success btn-lg w-100">
+                                    <i class="fas fa-book-reader me-2"></i>Borrow This Book
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary btn-lg w-100" disabled>
+                                <i class="fas fa-times-circle me-2"></i>Currently Unavailable
+                            </button>
+                        }
+
+                        <form asp-controller="Wishlist" asp-action="Add" asp-route-id="@Model.BookID" method="post">
+                            <button type="submit" class="btn btn-outline-danger btn-lg w-100">
+                                <i class="far fa-heart me-2"></i>Add to Wishlist
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login to Borrow
+                        </a>
+                    }
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("Librarian"))
+                    {
+                        <hr>
+                        <a asp-action="Edit" asp-route-id="@Model.BookID" class="btn btn-outline-warning btn-lg w-100">
+                            <i class="fas fa-edit me-2"></i>Edit Book
+                        </a>
+                        <button type="button" class="btn btn-outline-danger btn-lg w-100"
+                                onclick="confirmDelete('@Model.BookID', '@Model.Title')">
+                            <i class="fas fa-trash me-2"></i>Delete Book
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="card">
+            <div class="card-header bg-gradient-info text-white">
+                <h6 class="card-title mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>Quick Stats
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="border-end">
+                            <div class="h4 mb-0 text-primary">@Model.AvailableCopies</div>
+                            <small class="text-muted">Available</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="h4 mb-0 text-info">0</div>
+                        <small class="text-muted">Borrowed</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Back Button -->
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Books List
+    </a>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(bookId, bookTitle) {
+            Swal.fire({
+                title: 'Delete Book?',
+                text: `Are you sure you want to delete "${bookTitle}"? This action cannot be undone.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel',
+                background: '#1a1a1a',
+                color: 'white'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Create and submit delete form
+                    const form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = `/Books/Delete/${bookId}`;
+
+                    const tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = '__RequestVerificationToken';
+                    tokenInput.value = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                    form.appendChild(tokenInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script>
+}
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .bg-gradient-secondary {
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #17a2b8, #0d6efd);
+    }
+
+    .bg-success-light {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
+
+    .bg-danger-light {
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+
+    .bg-info-light {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+
+    .book-cover-placeholder {
+        padding: 2rem;
+        border: 2px dashed #dee2e6;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    }
+</style>

@@ -1,0 +1,80 @@
+@model IEnumerable<LibraryManagementSystem.Models.Wishlist>
+
+@{
+    ViewData["Title"] = "My Wishlist";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+        <i class="fas fa-heart text-danger me-2"></i>My Wishlist
+    </h2>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Books
+    </a>
+</div>
+
+@if (Model.Any())
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="book-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="category-badge">@item.Book.Category</span>
+                            <div class="btn-group">
+                                <form asp-action="MoveToBorrow" asp-route-id="@item.WishlistID" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-success btn-sm" 
+                                            title="Borrow this book" @(item.Book.AvailableCopies <= 0 ? "disabled" : "")>
+                                        <i class="fas fa-bookmark me-1"></i>Borrow
+                                    </button>
+                                </form>
+                                <form asp-action="Remove" asp-route-id="@item.WishlistID" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Remove from wishlist">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <h5 class="card-title">@item.Book.Title</h5>
+                        <h6 class="card-subtitle mb-3 text-muted">
+                            <i class="fas fa-user me-1"></i>@item.Book.Author
+                        </h6>
+                        
+                        <div class="book-meta">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="available-badge @(item.Book.AvailableCopies > 0 ? "" : "bg-danger")">
+                                    <i class="fas fa-copy me-1"></i>
+                                    @item.Book.AvailableCopies Available
+                                </span>
+                                <small class="text-muted">
+                                    Added: @item.AddedDate.ToString("MMM dd, yyyy")
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="btn-group w-100">
+                            <a asp-controller="Books" asp-action="Details" asp-route-id="@item.Book.BookID" 
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-info-circle me-1"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="text-center py-5">
+        <i class="fas fa-heart fa-4x text-muted mb-3"></i>
+        <h4 class="text-muted">Your wishlist is empty</h4>
+        <p class="text-muted">Start adding books you'd like to read later!</p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">
+            <i class="fas fa-book me-2"></i>Browse Books
+        </a>
+    </div>
+}

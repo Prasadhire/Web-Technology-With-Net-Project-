@@ -1,0 +1,282 @@
+@{
+    ViewData["Title"] = "System Statistics";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">
+            <i class="fas fa-chart-bar me-2 text-primary"></i>System Statistics
+        </h2>
+        <p class="text-muted mb-0">Detailed analytics and insights</p>
+    </div>
+    <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+    </a>
+</div>
+
+<!-- Monthly Statistics Chart -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-gradient-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-calendar-alt me-2"></i>Monthly Activity (Last 6 Months)
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Popular Books and Active Users -->
+<div class="row mb-5">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-gradient-success text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-star me-2"></i>Most Popular Books
+                </h5>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.PopularBooks != null && ViewBag.PopularBooks.Any())
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var book in ViewBag.PopularBooks)
+                        {
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>@book.Book.Title</strong>
+                                    <br><small class="text-muted">by @book.Book.Author</small>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">@book.BorrowCount borrows</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No borrowing data available</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-gradient-info text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-users me-2"></i>Most Active Users
+                </h5>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.ActiveUsers != null && ViewBag.ActiveUsers.Any())
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var user in ViewBag.ActiveUsers)
+                        {
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>@user.User.Name</strong>
+                                    <br><small class="text-muted">@user.User.Email</small>
+                                </div>
+                                <span class="badge bg-success rounded-pill">@user.BorrowCount borrows</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No user activity data available</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Health and Quick Stats -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-gradient-warning text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-heartbeat me-2"></i>System Health
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="p-3">
+                            <i class="fas fa-server fa-3x text-success mb-2"></i>
+                            <h6>Database</h6>
+                            <span class="badge bg-success">Connected</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3">
+                            <i class="fas fa-clock fa-3x text-info mb-2"></i>
+                            <h6>Uptime</h6>
+                            <span class="badge bg-info">24/7</span>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="text-center">
+                    <small class="text-muted">Last updated: @DateTime.Now.ToString("MMM dd, yyyy HH:mm")</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-gradient-secondary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-pie me-2"></i>Quick Overview
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="p-3">
+                            <div class="h3 text-primary mb-1">@((ViewBag.MonthlyStats as IEnumerable<dynamic>)?.Sum(s => (int)s.BorrowCount) ?? 0)</div>
+                            <small class="text-muted">Total Borrows (6 months)</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3">
+                            <div class="h3 text-success mb-1">@((ViewBag.MonthlyStats as IEnumerable<dynamic>)?.Sum(s => (int)s.ReturnCount) ?? 0)</div>
+                            <small class="text-muted">Total Returns (6 months)</small>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="p-3">
+                            <div class="h4 text-warning mb-1">@(ViewBag.PopularBooks?.Count ?? 0)</div>
+                            <small class="text-muted">Popular Books</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3">
+                            <div class="h4 text-info mb-1">@(ViewBag.ActiveUsers?.Count ?? 0)</div>
+                            <small class="text-muted">Active Users</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Monthly Activity Chart
+            const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+            const monthlyData = @Html.Raw(Json.Serialize((object)(ViewBag.MonthlyStats ?? new List<object>())));
+
+            const labels = [];
+            const borrowData = [];
+            const returnData = [];
+
+            for (let i = 0; i < monthlyData.length; i++) {
+                labels.push(monthlyData[i].Month + '/' + monthlyData[i].Year);
+                borrowData.push(monthlyData[i].BorrowCount);
+                returnData.push(monthlyData[i].ReturnCount);
+            }
+
+            new Chart(monthlyCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Borrows',
+                        data: borrowData,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Returns',
+                        data: returnData,
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #17a2b8, #0d6efd);
+    }
+
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, #f39c12, #e74c3c);
+    }
+
+    .bg-gradient-secondary {
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+    }
+
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .list-group-item {
+        border: none;
+        border-bottom: 1px solid #f8f9fa;
+        transition: all 0.3s ease;
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+</style>

@@ -1,0 +1,272 @@
+@model IEnumerable<LibraryManagementSystem.Models.Book>
+
+@{
+    ViewData["Title"] = "Books Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">
+            <i class="fas fa-book me-2 text-primary"></i>Books Management
+        </h2>
+        <p class="text-muted mb-0">Manage your library collection</p>
+    </div>
+    @if (User.IsInRole("Admin") || User.IsInRole("Librarian"))
+    {
+        <a asp-action="Create" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus-circle me-2"></i>Add New Book
+        </a>
+    }
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="feature-icon text-primary">
+                <i class="fas fa-book fa-2x"></i>
+            </div>
+            <div class="stats-number">@Model.Count()</div>
+            <div class="stats-label">Total Books</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="feature-icon text-success">
+                <i class="fas fa-check-circle fa-2x"></i>
+            </div>
+            <div class="stats-number">@Model.Count(b => b.AvailableCopies > 0)</div>
+            <div class="stats-label">Available Books</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="feature-icon text-warning">
+                <i class="fas fa-exclamation-triangle fa-2x"></i>
+            </div>
+            <div class="stats-number">@Model.Count(b => b.AvailableCopies == 0)</div>
+            <div class="stats-label">Out of Stock</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="feature-icon text-info">
+                <i class="fas fa-tags fa-2x"></i>
+            </div>
+            <div class="stats-number">@Model.Select(b => b.Category).Distinct().Count()</div>
+            <div class="stats-label">Categories</div>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Search Books</label>
+                <input type="text" name="searchString" class="form-control" placeholder="Search by title or author..." value="@ViewData["CurrentFilter"]">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Category</label>
+                <select name="category" class="form-select filter-select" onchange="this.form.submit()">
+                    <option value="">All Categories</option>
+                    @foreach (var cat in ViewBag.Categories)
+                    {
+                        <option value="@cat" selected="@(cat.ToLower() == ViewData["CurrentCategory"]?.ToString().ToLower())">@cat</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-bold">Sort By</label>
+                <select name="sortBy" class="form-select filter-select" onchange="this.form.submit()">
+                    <option value="title" selected="@(ViewData["SortBy"]?.ToString() == "title")">Title</option>
+                    <option value="author" selected="@(ViewData["SortBy"]?.ToString() == "author")">Author</option>
+                    <option value="category" selected="@(ViewData["SortBy"]?.ToString() == "category")">Category</option>
+                    <option value="available" selected="@(ViewData["SortBy"]?.ToString() == "available")">Available Copies</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-times me-1"></i>Clear
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Books Table -->
+<div class="card">
+    <div class="card-header bg-gradient-primary text-white">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-list me-2"></i>Books Collection
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th><i class="fas fa-book me-1"></i>Title</th>
+                        <th><i class="fas fa-user me-1"></i>Author</th>
+                        <th><i class="fas fa-tag me-1"></i>Category</th>
+                        <th><i class="fas fa-copy me-1"></i>Available Copies</th>
+                        <th><i class="fas fa-cogs me-1"></i>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="animate__animated animate__fadeInUp">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <strong>@item.Title</strong>
+                                        @if (item.AvailableCopies == 0)
+                                        {
+                                            <br><small class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Out of Stock</small>
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                            <td>@item.Author</td>
+                            <td>
+                                <span class="badge bg-primary">@item.Category</span>
+                            </td>
+                            <td>
+                                <span class="badge @(item.AvailableCopies > 0 ? "bg-success" : "bg-danger")">
+                                    @item.AvailableCopies
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Details" asp-route-id="@item.BookID" class="btn btn-outline-info btn-sm" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Librarian"))
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.BookID" class="btn btn-outline-warning btn-sm" title="Edit Book">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" title="Delete Book"
+                                                onclick="confirmDelete('@item.BookID', '@item.Title')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+@if (ViewBag.TotalPages > 1)
+{
+    <nav aria-label="Books pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            @if (ViewBag.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-page="@(ViewBag.CurrentPage - 1)"
+                       asp-route-searchString="@ViewData["CurrentFilter"]"
+                       asp-route-category="@ViewData["CurrentCategory"]"
+                       asp-route-sortBy="@ViewData["SortBy"]">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </a>
+                </li>
+            }
+
+            @for (int i = Math.Max(1, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2); i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-page="@i"
+                       asp-route-searchString="@ViewData["CurrentFilter"]"
+                       asp-route-category="@ViewData["CurrentCategory"]"
+                       asp-route-sortBy="@ViewData["SortBy"]">
+                        @i
+                    </a>
+                </li>
+            }
+
+            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-page="@(ViewBag.CurrentPage + 1)"
+                       asp-route-searchString="@ViewData["CurrentFilter"]"
+                       asp-route-category="@ViewData["CurrentCategory"]"
+                       asp-route-sortBy="@ViewData["SortBy"]">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5">
+        <i class="fas fa-book fa-4x text-muted mb-3"></i>
+        <h4 class="text-muted">No books found</h4>
+        <p class="text-muted">Try adjusting your search criteria or add some books to the collection.</p>
+        @if (User.IsInRole("Admin") || User.IsInRole("Librarian"))
+        {
+            <a asp-action="Create" class="btn btn-primary mt-3">
+                <i class="fas fa-plus-circle me-2"></i>Add First Book
+            </a>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script>
+        function confirmDelete(bookId, bookTitle) {
+            Swal.fire({
+                title: 'Delete Book?',
+                text: `Are you sure you want to delete "${bookTitle}"? This action cannot be undone.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel',
+                background: '#1a1a1a',
+                color: 'white'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Create and submit delete form
+                    const form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = `/Books/Delete/${bookId}`;
+
+                    const tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = '__RequestVerificationToken';
+                    tokenInput.value = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                    form.appendChild(tokenInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+
+        // Add animation delay to table rows
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach((row, index) => {
+                row.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+}
