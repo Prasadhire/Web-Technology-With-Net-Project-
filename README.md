@@ -234,13 +234,13 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ### Support
 
-For support, email your-email@example.com or create an issue in the repository.
+For support, email hireprasad002@gmail.com.
 
 ## 📞 Contact
 
 Your Name - Prasad Hire | hireprasad002@gmail.com
 
-Project Link: 
+Project Link: https://github.com/Prasadhire/Web-Technology-With-Net-Project-.git
 
 ---
 
