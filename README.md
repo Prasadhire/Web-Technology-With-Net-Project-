@@ -238,9 +238,9 @@ For support, email your-email@example.com or create an issue in the repository.
 
 ## 📞 Contact
 
-Your Name - [@yourtwitter](https://twitter.com/yourtwitter) - email@example.com
+Your Name - Prasad Hire | hireprasad002@gmail.com
 
-Project Link: [https://github.com/yourusername/library-management-system](https://github.com/yourusername/library-management-system)
+Project Link: 
 
 ---
 
