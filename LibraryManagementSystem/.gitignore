@@ -1,0 +1,19 @@
+# Ignore build folders
+bin/
+obj/
+Debug/
+Release/
+
+# Ignore user files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore Visual Studio cache
+.vs/
+.vscode/
+
+# Ignore logs and temp
+*.log
+*.tmp
